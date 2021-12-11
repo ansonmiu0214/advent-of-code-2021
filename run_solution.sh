@@ -11,27 +11,27 @@ function error {
 ###############################################################################
 
 function golangSolution {
-    SCRIPT_DIR=$1
+    SOLUTION_DIR=$1
     DAY=$2
     INPUT_FILE=$3
     PART=$4
     
-    SOLUTION="$SCRIPT_DIR/day$DAY.go"
+    SOLUTION="$SOLUTION_DIR/day$DAY.go"
     if [[ ! -f $SOLUTION ]]; then
         error "Cannot find solution: $SOLUTION"
     fi
 
     set -x
-    go run $SOLUTION $SCRIPT_DIR/util.go -input $INPUT_FILE -part $PART
+    go run $SOLUTION $SOLUTION_DIR/util.go -input $INPUT_FILE -part $PART
 }
 
 function pythonSolution {
-    SCRIPT_DIR=$1
+    SOLUTION_DIR=$1
     DAY=$2
     INPUT_FILE=$3
     PART=$4
     
-    SOLUTION="$SCRIPT_DIR/day$DAY.py"
+    SOLUTION="$SOLUTION_DIR/day$DAY.py"
     if [[ ! -f $SOLUTION ]]; then
         error "Cannot find solution: $SOLUTION"
     fi
@@ -110,10 +110,10 @@ case "$LANGUAGE" in
         ;;
 esac
 
-# Sanity check for 
-SCRIPT_DIR="$HERE/$LANGUAGE"
-if [[ ! -d $SCRIPT_DIR ]]; then
-    error "Cannot find directory for language solutions: $SCRIPT_DIR"
+# Sanity check for solutions directory.
+SOLUTION_DIR="$HERE/$LANGUAGE"
+if [[ ! -d $SOLUTION_DIR ]]; then
+    error "Cannot find directory for language solutions: $SOLUTION_DIR"
 fi
 
-$RUN_SOLUTION $SCRIPT_DIR $DAY $INPUT_FILE $PART
+$RUN_SOLUTION $SOLUTION_DIR $DAY $INPUT_FILE $PART
