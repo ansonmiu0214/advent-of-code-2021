@@ -14,12 +14,12 @@ function error {
 
 ###############################################################################
 #                      ADAPTERS PER SUPPORTED LANGUAGE                        #
-#
-# Arguments:
-#: 1 directory to solution implementation
-#: 2 day (of the problem from Advent of Code)
-#: 3 path to input file
-#: 4 part (of the problem from Advent of Code)
+#                                                                             #
+# Arguments:                                                                  #
+#: 1 directory to solution implementation                                     #
+#: 2 day (of the problem from Advent of Code)                                 #
+#: 3 path to input file                                                       #
+#: 4 part (of the problem from Advent of Code)                                #
 ###############################################################################
 
 function golangSolution {
@@ -52,9 +52,14 @@ function pythonSolution {
     python3.8 -m python.day$DAY --input $INPUT_FILE --part $PART
 }
 
+
 ###############################################################################
 #                                     MAIN                                    #
 ###############################################################################
+
+if [[ $# == 0 ]]; then
+    error "Missing option 'LANGUAGE'"
+fi
 
 LANGUAGE=$1
 HERE=$(realpath $(dirname $0))
