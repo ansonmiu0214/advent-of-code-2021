@@ -1,5 +1,6 @@
 import argparse
 import sys
+import time
 from pathlib import Path
 from typing import Callable, List, Literal, Protocol, Union
 
@@ -30,7 +31,12 @@ def run_solution(
 
     input = parsed_args.input.read_text()
     solution = part1 if parsed_args.part == 1 else part2
+    
+    start_time_in_seconds = time.perf_counter()
     answer = solution(input)
+    end_time_in_seconds = time.perf_counter()
+    
+    elapsed_time = end_time_in_seconds - start_time_in_seconds
+    print(f"({elapsed_time:.2f}s) Part {parsed_args.part}: {answer}")
 
-    print(f"Part {parsed_args.part}: {answer}")
     return 0
