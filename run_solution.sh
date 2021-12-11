@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#
+# Prints the specified error message and exits with non-zero return code.
+#
+# Arguments:
+#:  1 error message
+#
 function error {
     echo $1
     exit 1
@@ -8,6 +14,12 @@ function error {
 
 ###############################################################################
 #                      ADAPTERS PER SUPPORTED LANGUAGE                        #
+#
+# Arguments:
+#: 1 directory to solution implementation
+#: 2 day (of the problem from Advent of Code)
+#: 3 path to input file
+#: 4 part (of the problem from Advent of Code)
 ###############################################################################
 
 function golangSolution {
@@ -97,6 +109,12 @@ if [[ ! -f $INPUT_FILE ]]; then
     error "Cannot find input file: $INPUT_FILE"
 fi
 
+# Sanity check for solutions directory.
+SOLUTION_DIR="$HERE/$LANGUAGE"
+if [[ ! -d $SOLUTION_DIR ]]; then
+    error "Cannot find directory for language solutions: $SOLUTION_DIR"
+fi
+
 # Select the adapter function based on the user-specified language.
 case "$LANGUAGE" in
     python)
@@ -109,11 +127,5 @@ case "$LANGUAGE" in
         error "Unsupported language: $LANGUAGE" 
         ;;
 esac
-
-# Sanity check for solutions directory.
-SOLUTION_DIR="$HERE/$LANGUAGE"
-if [[ ! -d $SOLUTION_DIR ]]; then
-    error "Cannot find directory for language solutions: $SOLUTION_DIR"
-fi
 
 $RUN_SOLUTION $SOLUTION_DIR $DAY $INPUT_FILE $PART
