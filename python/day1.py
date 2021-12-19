@@ -31,7 +31,7 @@ def count_increments(measurements: List[int], *, window_size: int) -> int:
     increments = 0
     for curr_measurement in measurements:
         curr_window_sum = prev_window_sum - window.popleft() + curr_measurement
-    
+
         if prev_window_sum < curr_window_sum:
             increments += 1
 

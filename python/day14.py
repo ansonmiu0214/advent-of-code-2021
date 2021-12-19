@@ -7,6 +7,7 @@ from python.util import run_solution
 
 PairInsertionRules = Dict[str, str]
 
+
 class SubmarineManual(NamedTuple):
     polymer_template: str
     pair_insertion_rules: PairInsertionRules
@@ -40,40 +41,38 @@ def encode_into_pair_counts(polymer: str) -> Counter[Tuple[str, str]]:
     """..."""
 
     pairs = list(zip(polymer, polymer[1:]))
-    return Counter(pairs)    
+    return Counter(pairs)
 
 
 def apply_pair_insertion_rules(
     pair_counts: Counter[Tuple[str, str]],
     pair_insertion_rules: PairInsertionRules,
     *,
-    num_times: int
+    num_times: int,
 ) -> Counter[Tuple[str, str]]:
     """..."""
 
     for _ in range(num_times):
         new_pair_counts = Counter()
-    
+
         for (x, y), count in pair_counts.items():
             new_pair_counts[(x, pair_insertion_rules[f"{x}{y}"])] += count
             new_pair_counts[(pair_insertion_rules[f"{x}{y}"], y)] += count
 
         pair_counts = new_pair_counts
-    
+
     return pair_counts
 
 
 def decode_pair_counts_into_element_counts(
-    pair_counts: Counter[Tuple[str, str]],
-    *,
-    first_element: str
+    pair_counts: Counter[Tuple[str, str]], *, first_element: str
 ) -> Counter[str]:
     """..."""
 
     element_counts = Counter()
     for (_, y), count in pair_counts.items():
         element_counts[y] += count
-    
+
     element_counts[first_element] += 1
     return element_counts
 
@@ -86,14 +85,11 @@ def part1(input: str) -> int:
     pair_counts = encode_into_pair_counts(polymer_template)
 
     new_pair_counts = apply_pair_insertion_rules(
-        pair_counts,
-        pair_insertion_rules,
-        num_times=10
+        pair_counts, pair_insertion_rules, num_times=10
     )
 
     element_counter = decode_pair_counts_into_element_counts(
-        new_pair_counts,
-        first_element=polymer_template[0]
+        new_pair_counts, first_element=polymer_template[0]
     )
 
     frequencies = element_counter.most_common()
@@ -111,15 +107,11 @@ def part2(input: str) -> int:
     pair_counts = encode_into_pair_counts(polymer_template)
 
     new_pair_counts = apply_pair_insertion_rules(
-        pair_counts,
-        pair_insertion_rules,
-        num_times=40
+        pair_counts, pair_insertion_rules, num_times=40
     )
 
     element_counter = decode_pair_counts_into_element_counts(
-        new_pair_counts,
-        first_element=polymer_template[0]
-    
+        new_pair_counts, first_element=polymer_template[0]
     )
 
     frequencies = element_counter.most_common()

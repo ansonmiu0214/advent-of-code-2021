@@ -29,9 +29,7 @@ def parse_dot(line: str) -> Dot:
     """..."""
 
     tokens = line.split(",")
-    assert len(tokens) == 2, (
-        f"Expected 2 tokens on line '{line}', found {len(tokens)}"
-    )
+    assert len(tokens) == 2, f"Expected 2 tokens on line '{line}', found {len(tokens)}"
 
     x, y = tokens
     return Dot(x=int(x), y=int(y))
@@ -84,7 +82,7 @@ def apply_fold(grid: Counter[Dot], fold: FoldInstruction) -> Counter[Dot]:
 
             new_position = Dot(
                 x=dot.x - 2 * distance_to_line if fold.axis == "x" else dot.x,
-                y=dot.y - 2 * distance_to_line if fold.axis == "y" else dot.y
+                y=dot.y - 2 * distance_to_line if fold.axis == "y" else dot.y,
             )
             new_grid[new_position] += count
 
@@ -103,7 +101,7 @@ def visualise_grid(grid: Counter[Dot]) -> None:
 
     for col, row in visible_dots:
         canvas[row][col] = "#"
-    
+
     for row in canvas:
         print("".join(row))
 
@@ -123,12 +121,8 @@ def part2(input: str) -> int:
 
     grid, instructions = parse_transparent_paper(input)
 
-    grid = functools.reduce(
-        apply_fold,
-        instructions,
-        grid
-    )
-    
+    grid = functools.reduce(apply_fold, instructions, grid)
+
     visualise_grid(grid)
 
 

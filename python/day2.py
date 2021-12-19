@@ -17,9 +17,7 @@ def parse_command(line: str) -> Command:
     """..."""
 
     tokens = line.split(" ")
-    assert len(tokens) == 2, (
-        f"Expected 2 tokens on line '{line}', found {len(tokens)}"
-    )
+    assert len(tokens) == 2, f"Expected 2 tokens on line '{line}', found {len(tokens)}"
 
     direction = tokens[0]
     assert direction in _SUPPORTED_COMMANDS, (
@@ -43,14 +41,14 @@ State = TypeVar("State")
 def simulate_commands(
     commands: List[Command],
     transitions: Dict[str, Callable[[Command, State], State]],
-    initialState: State
+    initialState: State,
 ) -> State:
     """..."""
 
     return functools.reduce(
         lambda state, command: transitions[command.direction](command, state),
         commands,
-        initialState
+        initialState,
     )
 
 
@@ -67,17 +65,17 @@ def part1(input: str) -> int:
 
     forward: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position + command.magnitude,
-        depth=state.depth
+        depth=state.depth,
     )
 
     down: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position,
-        depth=state.depth + command.magnitude
+        depth=state.depth + command.magnitude,
     )
 
     up: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position,
-        depth=state.depth - command.magnitude
+        depth=state.depth - command.magnitude,
     )
 
     transitions = dict(forward=forward, down=down, up=up)
@@ -103,19 +101,19 @@ def part2(input: str) -> int:
     forward: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position + command.magnitude,
         depth=state.depth + state.aim * command.magnitude,
-        aim=state.aim
+        aim=state.aim,
     )
 
     down: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position,
         depth=state.depth,
-        aim=state.aim + command.magnitude
+        aim=state.aim + command.magnitude,
     )
 
     up: StateTransition = lambda command, state: State(
         horizontal_position=state.horizontal_position,
         depth=state.depth,
-        aim=state.aim - command.magnitude
+        aim=state.aim - command.magnitude,
     )
 
     transitions = dict(forward=forward, down=down, up=up)

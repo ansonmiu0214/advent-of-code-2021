@@ -38,10 +38,7 @@ def parse_target_area(line: str) -> TargetArea:
     match = pattern.match(line)
     assert match is not None, f"Invalid input: {line}"
 
-    target_area_parameters = {
-        key: int(val)
-        for key, val in match.groupdict().items()
-    }
+    target_area_parameters = {key: int(val) for key, val in match.groupdict().items()}
 
     return TargetArea(**target_area_parameters)
 
@@ -51,8 +48,10 @@ def in_target_area(target_area: TargetArea, position: XY) -> bool:
 
     x, y = position
 
-    return target_area.x_min <= x <= target_area.x_max \
+    return (
+        target_area.x_min <= x <= target_area.x_max
         and target_area.y_min <= y <= target_area.y_max
+    )
 
 
 def simulate_step(state: State) -> State:
@@ -64,9 +63,7 @@ def simulate_step(state: State) -> State:
     )
 
     x_velocity = state.velocity.x + (
-        0 if state.velocity.x == 0 else
-        -1 if state.velocity.x > 0 else
-        1
+        0 if state.velocity.x == 0 else -1 if state.velocity.x > 0 else 1
     )
 
     y_velocity = state.velocity.y - 1
@@ -87,10 +84,7 @@ def overshot(position: XY, target_area: TargetArea) -> bool:
 
 
 def simulate_trajectory(
-    initial_velocity: XY,
-    *,
-    initial_position: XY,
-    target_area: TargetArea
+    initial_velocity: XY, *, initial_position: XY, target_area: TargetArea
 ) -> Optional[Trajectory]:
     """..."""
 
@@ -108,10 +102,10 @@ def simulate_trajectory(
 
 
 def find_plausible_trajectories_for_any_initial_velocity(
-    target_area: TargetArea
+    target_area: TargetArea,
 ) -> List[Trajectory]:
     """..."""
-    
+
     origin = XY(0, 0)
     candidate_initial_velocities = (
         XY(x, y)
@@ -120,13 +114,13 @@ def find_plausible_trajectories_for_any_initial_velocity(
     )
 
     simulate_trajectory_given_initial_velocity = functools.partial(
-        simulate_trajectory,
-        initial_position=origin,
-        target_area=target_area
+        simulate_trajectory, initial_position=origin, target_area=target_area
     )
-    
+
     with multiprocessing.Pool(os.cpu_count() or 4) as pool:
-        trajectories = pool.map(simulate_trajectory_given_initial_velocity, candidate_initial_velocities)
+        trajectories = pool.map(
+            simulate_trajectory_given_initial_velocity, candidate_initial_velocities
+        )
 
     return list(filter(None, trajectories))
 
@@ -147,6 +141,7 @@ def part2(input: str) -> int:
 
     trajectories = find_plausible_trajectories_for_any_initial_velocity(target_area)
     return len(trajectories)
+
 
 if __name__ == "__main__":
     sys.exit(run_solution(part1=part1, part2=part2))

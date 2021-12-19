@@ -12,7 +12,6 @@ class PacketHeader(NamedTuple):
 
 
 class Packet(Protocol):
-
     def version_sum(self) -> int:
         """..."""
 
@@ -36,28 +35,23 @@ def product(values: List[int]) -> int:
     return functools.reduce(lambda acc, curr: acc * curr, values, 1)
 
 
-def _binary_operator(
-    values: List[int], *, operator: Callable[[int, int], int]
-) -> int:
+def _binary_operator(values: List[int], *, operator: Callable[[int, int], int]) -> int:
     assert len(values) == 2, f"Expected length ({len(values)}) to be 2"
-    
+
     first, second = values
     return operator(first, second)
 
 
 greater_than = functools.partial(
-    _binary_operator,
-    operator=lambda first, second: first > second
+    _binary_operator, operator=lambda first, second: first > second
 )
 
 less_than = functools.partial(
-    _binary_operator,
-    operator=lambda first, second: first < second
+    _binary_operator, operator=lambda first, second: first < second
 )
 
 equals = functools.partial(
-    _binary_operator,
-    operator=lambda first, second: first == second
+    _binary_operator, operator=lambda first, second: first == second
 )
 
 
@@ -83,8 +77,9 @@ class OperatorPacket(Packet):
         self.operator = operator_packet_strategies[self.header.type_id]
 
     def version_sum(self) -> int:
-        return self.header.version \
-            + sum(packet.version_sum() for packet in self.subpackets)
+        return self.header.version + sum(
+            packet.version_sum() for packet in self.subpackets
+        )
 
     def evaluate(self) -> int:
         subpacket_values = [subpacket.evaluate() for subpacket in self.subpackets]
@@ -122,7 +117,7 @@ def hex_to_binary(hex: str) -> str:
     bits = []
     for digit in hex:
         bits.append(binary_for_hex[digit])
-    
+
     return "".join(bits)
 
 
@@ -140,13 +135,10 @@ def _parse_literal_packet(
         marker = bits[end_index]
 
         end_index += 1
-        value_bits.append(bits[end_index:end_index + 4])
+        value_bits.append(bits[end_index : end_index + 4])
         end_index += 4
-    
-    packet = LiteralPacket(
-        header=header,
-        value=binary_to_decimal("".join(value_bits))
-    )
+
+    packet = LiteralPacket(header=header, value=binary_to_decimal("".join(value_bits)))
 
     return packet, end_index
 
@@ -164,19 +156,23 @@ def _parse_operator_packet(
 
     if subpacket_indicator == "0":
         subpacket_indicator_size = 15
-        total_size_of_subpackets = binary_to_decimal(bits[end_index:end_index + subpacket_indicator_size])
+        total_size_of_subpackets = binary_to_decimal(
+            bits[end_index : end_index + subpacket_indicator_size]
+        )
         end_index += subpacket_indicator_size
-    
+
         subpackets_size = 0
         while subpackets_size < total_size_of_subpackets:
             subpacket_start = end_index
             subpacket, end_index = _parse_packet(bits, start_index=subpacket_start)
-            subpackets_size += (end_index - subpacket_start)
+            subpackets_size += end_index - subpacket_start
             subpackets.append(subpacket)
-    
+
     else:
         subpacket_indicator_size = 11
-        number_of_subpackets = binary_to_decimal(bits[end_index:end_index + subpacket_indicator_size])
+        number_of_subpackets = binary_to_decimal(
+            bits[end_index : end_index + subpacket_indicator_size]
+        )
         end_index += subpacket_indicator_size
 
         for _ in range(number_of_subpackets):
@@ -192,10 +188,10 @@ def _parse_packet(bits: str, *, start_index: int = 0) -> Tuple[Packet, int]:
     """..."""
 
     end_index = start_index
-    version = binary_to_decimal(bits[end_index:end_index + 3])
+    version = binary_to_decimal(bits[end_index : end_index + 3])
     end_index += 3
 
-    type_id = binary_to_decimal(bits[end_index:end_index + 3])
+    type_id = binary_to_decimal(bits[end_index : end_index + 3])
     end_index += 3
 
     header = PacketHeader(
@@ -203,7 +199,9 @@ def _parse_packet(bits: str, *, start_index: int = 0) -> Tuple[Packet, int]:
         type_id=type_id,
     )
 
-    packet_parser = _parse_literal_packet if header.type_id == 4 else _parse_operator_packet
+    packet_parser = (
+        _parse_literal_packet if header.type_id == 4 else _parse_operator_packet
+    )
     return packet_parser(bits, header=header, start_index=end_index)
 
 

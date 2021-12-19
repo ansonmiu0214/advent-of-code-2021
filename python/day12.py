@@ -11,13 +11,14 @@ Passage = Tuple[Cave, Cave]
 Layout = Dict[Cave, Set[Cave]]
 CaveVisitStrategy = Callable[[Cave, Counter[Cave]], bool]
 
+
 def parse_passage(line: str) -> Passage:
     """..."""
 
     passage = line.split("-")
-    assert len(passage) == 2, (
-        f"Expected 2 tokens on line '{line}', found {len(passage)}"
-    )
+    assert (
+        len(passage) == 2
+    ), f"Expected 2 tokens on line '{line}', found {len(passage)}"
 
     return passage
 
@@ -26,7 +27,7 @@ def parse_layout(input: str) -> Layout:
     """..."""
 
     layout: Layout = collections.defaultdict(set)
-    
+
     for line in input.splitlines():
         cave1, cave2 = parse_passage(line)
         layout[cave1].add(cave2)
@@ -71,17 +72,17 @@ def find_paths(
     curr_cave: Cave,
     *,
     visit_count: Counter[Cave],
-    can_visit_cave: CaveVisitStrategy
+    can_visit_cave: CaveVisitStrategy,
 ) -> None:
     """..."""
-    
+
     all_paths: List[Path] = []
 
     if not can_visit_cave(curr_cave, visit_count):
         return all_paths
 
     visit_count[curr_cave] += 1
-    path_so_far.append(curr_cave)    
+    path_so_far.append(curr_cave)
 
     if is_end(curr_cave):
         all_paths.append(list(path_so_far))
@@ -92,7 +93,7 @@ def find_paths(
                 path_so_far=path_so_far,
                 curr_cave=neighbour,
                 visit_count=visit_count,
-                can_visit_cave=can_visit_cave
+                can_visit_cave=can_visit_cave,
             )
 
     path_so_far.pop()
@@ -106,15 +107,14 @@ def part1(input: str) -> int:
 
     def can_visit_cave(cave: Cave, prev_visit_counts: Counter[Cave]) -> bool:
         """..."""
-    
+
         if prev_visit_counts[cave] == 0:
             return True
-    
+
         if is_start(cave) or is_small_cave(cave):
             return False
-        
-        return True
 
+        return True
 
     layout = parse_layout(input)
     paths = find_paths(
@@ -122,7 +122,7 @@ def part1(input: str) -> int:
         path_so_far=[],
         curr_cave="start",
         visit_count=collections.Counter(),
-        can_visit_cave=can_visit_cave
+        can_visit_cave=can_visit_cave,
     )
     return len(paths)
 
@@ -132,24 +132,25 @@ def part2(input: str) -> int:
 
     def can_visit_cave(cave: Cave, prev_visit_counts: Counter[Cave]) -> bool:
         """..."""
-    
+
         if prev_visit_counts[cave] == 0:
-            return True    
+            return True
 
         if is_start(cave):
             return False
-        
+
         if is_small_cave(cave):
             if prev_visit_counts[cave] > 1:
                 return False
 
-            if any(visit_count > 1
-                   for existing_cave, visit_count in prev_visit_counts.items()
-                   if is_small_cave(existing_cave) and existing_cave != cave):
+            if any(
+                visit_count > 1
+                for existing_cave, visit_count in prev_visit_counts.items()
+                if is_small_cave(existing_cave) and existing_cave != cave
+            ):
                 return False
-        
-        return True
 
+        return True
 
     layout = parse_layout(input)
     paths = find_paths(
@@ -157,7 +158,7 @@ def part2(input: str) -> int:
         path_so_far=[],
         curr_cave="start",
         visit_count=collections.Counter(),
-        can_visit_cave=can_visit_cave
+        can_visit_cave=can_visit_cave,
     )
 
     return len(paths)
