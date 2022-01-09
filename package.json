@@ -1,0 +1,23 @@
+{
+  "name": "advent-of-code-2021",
+  "version": "1.0.0",
+  "description": "TypeScript solutions to Advent of Code 2021",
+  "scripts": {
+    "start": "ts-node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ansonmiu0214/advent-of-code-2021.git"
+  },
+  "author": "Anson Miu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ansonmiu0214/advent-of-code-2021/issues"
+  },
+  "homepage": "https://github.com/ansonmiu0214/advent-of-code-2021#readme",
+  "dependencies": {
+    "commander": "^8.3.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.3"
+  }
+}

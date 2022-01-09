@@ -11,7 +11,6 @@ function error {
     exit 1
 }
 
-
 ###############################################################################
 #                      ADAPTERS PER SUPPORTED LANGUAGE                        #
 #                                                                             #
@@ -50,6 +49,21 @@ function pythonSolution {
 
     set -x
     python3.8 -m python.day$DAY --input $INPUT_FILE --part $PART
+}
+
+function typescriptSolution {
+    SOLUTION_DIR=$1
+    DAY=$2
+    INPUT_FILE=$3
+    PART=$4
+    
+    SOLUTION="$SOLUTION_DIR/day$DAY.ts"
+    if [[ ! -f $SOLUTION ]]; then
+        error "Cannot find solution: $SOLUTION"
+    fi
+
+    set -x
+    npm start -- $SOLUTION --input $INPUT_FILE --part $PART
 }
 
 
@@ -127,6 +141,9 @@ case "$LANGUAGE" in
         ;;
     golang)
         RUN_SOLUTION=golangSolution
+        ;;
+    typescript)
+        RUN_SOLUTION=typescriptSolution
         ;;
     *)
         error "Unsupported language: $LANGUAGE" 
